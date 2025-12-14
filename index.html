@@ -11,7 +11,7 @@
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="stylesheet" href="style.css"/>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="icon" href="images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="images/icons/favicon.png" type="image/x-icon">
 </head>
 <body>
     <header>
@@ -19,21 +19,16 @@
         <div class="container">
             <div class="logo">
                 <img src="images/logos/logo_casa do autista_hor.png" alt="Logo Casa do Autista"/>
-                <h1></h1>
             </div>
             <button class="menu-mobile-btn" aria-label="Menu">
                 <i class="fas fa-bars"></i>
             </button>
             <nav>
-                <nav>
-                    <a href="#sobre">Nossa Essência</a>
-                    <a href="#servicos">Terapias</a>
-                    <a href="#equipe">Equipe</a>
-                    <a href="#convenios">Convênios</a>
-                    <a href="#localizacao">Localização</a>
-                    <a href="#agendamento" class="btn-destaque"><i class="fab fa-whatsapp"></i> Agendar</a>
-</nav>
-
+                <a href="#sobre">Nossa Essência</a>
+                <a href="#servicos">Terapias</a>
+                <a href="#convenios">Convênios</a>
+                <a href="#unidades">Unidades</a>
+                <a href="#agendamento" class="btn-destaque"><i class="fab fa-whatsapp"></i> Agendar</a>
             </nav>
         </div>
     </header>
@@ -48,6 +43,7 @@
                     <p class="destaque"><span class="text-light">UMA</span> <span class="text-bold">MISSÃO</span></p>
                 </div>
             </div>
+            
             <div class="hero-buttons">
                 <a href="#sobre" class="btn">Conheça Mais</a>
                 <a href="#agendamento" class="btn btn-primary">Agendar Consulta</a>
@@ -57,123 +53,19 @@
 
     <section id="sobre" class="essencia">
         <div class="container">
-            <div class="essencia-texto" data-aos="fade-right" data-aos-duration="800">
+            <div class="essencia-texto right-align" data-aos="fade-right" data-aos-duration="800">
                 <h3>Nossa <span>Missão</span></h3>
-                <p>Um espaço fundamentado nos valores cristãos de amor ao próximo, cuidado, respeito, valorização da vida.</p>
+                <p>Um espaço fundamentado nos valores cristãos de amor ao próximo, cuidado, respeito e valorização da vida.</p>
                 <p>Nossa missão é oferecer os tratamentos terapêuticos de excelência, com profissionais capacitados, promovendo inclusão, desenvolvimento e acolhimento às famílias.</p>
                 <blockquote>Nosso propósito não é ser apenas mais uma clínica e sim fazer parte do crescimento, desenvolvimento, celebrando cada avanço, cada conquista, é fazer a diferença na vida das pessoas.</blockquote>
-            </div>
-            <div class="essencia-imagem" data-aos="fade-left" data-aos-duration="800">
-                <img src="images/banners/fita.png" alt="Criança em terapia" class="img-transparent"/>
             </div>
         </div>
     </section>
 
     <section id="servicos" class="servicos">
         <div class="container">
-            <h3 data-aos="fade-up" data-aos-duration="600">Nossas <span>Terapias</span></h3>
+            <h3 data-aos="fade-up" data-aos-duration="600">Nossas <span>Especialidades</span></h3>
             <div class="cards-container" id="cards-servicos"></div>
-        </div>
-    </section>
-
-    <section id="equipe" class="equipe">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up" data-aos-duration="600">
-                <h3>Nossa <span>Equipe</span></h3>
-                <p class="section-subtitle">Profissionais especializados e comprometidos com o desenvolvimento integral</p>
-            </div>
-
-            <div class="equipe-carrossel">
-                <button class="carrossel-btn prev-btn" aria-label="Anterior">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                
-                <div class="equipe-container">
-                    <div class="profissional-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="card-image">
-                            <img src="images/equipe/psicologa.jpg" alt="Dra. Ana Silva - Psicóloga">
-                            <div class="card-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h4>Dra. Ana Silva</h4>
-                            <p class="especialidade">Psicóloga Clínica</p>
-                            <div class="profissional-info">
-                                <p><i class="fas fa-graduation-cap"></i> CRP 01/12345</p>
-                                <p><i class="fas fa-university"></i> Mestre em Análise do Comportamento</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="profissional-card" data-aos="fade-up" data-aos-delay="200">
-                        <div class="card-image">
-                            <img src="images/equipe/fonoaudiologa.jpg" alt="Dra. Carla Mendes - Fonoaudióloga">
-                            <div class="card-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h4>Dra. Carla Mendes</h4>
-                            <p class="especialidade">Fonoaudióloga</p>
-                            <div class="profissional-info">
-                                <p><i class="fas fa-graduation-cap"></i> CRFa 2/34567</p>
-                                <p><i class="fas fa-university"></i> Especialista em Linguagem Infantil</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="profissional-card" data-aos="fade-up" data-aos-delay="300">
-                        <div class="card-image">
-                            <img src="images/equipe/terapeuta-ocupacional.jpg" alt="Dr. Marcos Andrade - Terapeuta Ocupacional">
-                            <div class="card-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h4>Dr. Marcos Andrade</h4>
-                            <p class="especialidade">Terapeuta Ocupacional</p>
-                            <div class="profissional-info">
-                                <p><i class="fas fa-graduation-cap"></i> CREFITO 3/45678</p>
-                                <p><i class="fas fa-university"></i> Especialista em Integração Sensorial</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="profissional-card" data-aos="fade-up" data-aos-delay="400">
-                        <div class="card-image">
-                            <img src="images/equipe/psicopedagoga.jpg" alt="Dra. Juliana Costa - Psicopedagoga">
-                            <div class="card-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <h4>Dra. Juliana Costa</h4>
-                            <p class="especialidade">Psicopedagoga</p>
-                            <div class="profissional-info">
-                                <p><i class="fas fa-graduation-cap"></i> ABPp 12345/PE</p>
-                                <p><i class="fas fa-university"></i> Mestre em Educação Especial</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="carrossel-btn next-btn" aria-label="Próximo">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
         </div>
     </section>
 
@@ -220,37 +112,74 @@
                     </div>
                     
                     <div class="whatsapp-footer">
-                        <p><i class="far fa-clock"></i> Seg, Qua e Sex: 8h às 21h | Sáb: 8h às 17h</p>
+                        <p><i class="far fa-clock"></i> Atendimento em ambas unidades</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="localizacao" class="localizacao">
+    <section id="unidades" class="unidades">
         <div class="container">
-            <h3 data-aos="fade-up" data-aos-duration="600">Como <span>Chegar</span></h3>
-            <div class="localizacao-content">
-                <div class="localizacao-mapa" data-aos="fade-right" data-aos-duration="800">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3950.375238642799!2d-34.88982292501948!3d-8.063873881961423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7ab18f5a8797f2d%3A0xf3b0d5a2d5a2d5a2!2sR.%20Cap.%20Rebelinho%2C%20330%20-%20Pina%2C%20Recife%20-%20PE%2C%2051110-150!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr" 
-                        width="100%" 
-                        height="400" 
-                        style="border:0;" 
-                        allowfullscreen="" 
+            <h3 data-aos="fade-up" data-aos-duration="600">Nossas <span>Unidades</span></h3>
+            <p class="section-subtitle" style="text-align:center; margin-bottom:2rem;">
+                Escolha a unidade mais próxima de você
+            </p>
+
+            <div class="unidades-container" data-aos="fade-up" data-aos-duration="700">
+                <div class="unidade-card active"
+                    data-map="https://www.google.com/maps?q=R.+Cap.+Rebelinho,+330+-+Pina,+Recife+-+PE&output=embed"
+                    data-endereco="Rua Capitão Rebelinho, 330 - Pina, Recife/PE"
+                    data-mapslink="https://maps.google.com?q=R.+Cap.+Rebelinho,+330+-+Pina,+Recife+-+PE"
+                    data-whatsapp="558179059047"
+                    data-horario="Seg, Qua e Sex: 8h às 21h | Sáb: 8h às 17h">
+                    <h4>Unidade Pina</h4>
+                    <p>Rua Capitão Rebelinho, 330</p>
+                    <span>Recife / PE</span>
+                </div>
+
+                <div class="unidade-card em-breve"
+                    data-map="https://www.google.com/maps?q=Av.+Marechal+Floriano+Peixoto+-+Paulista+-+PE&output=embed"
+                    data-endereco="Av. Marechal Floriano Peixoto - Paulista/PE"
+                    data-mapslink="https://maps.google.com?q=Av.+Marechal+Floriano+Peixoto+-+Paulista+-+PE"
+                    data-whatsapp="558179059047"
+                    data-horario="Em breve">
+                    <h4>Unidade Paulista</h4>
+                    <p>Av. Marechal Floriano Peixoto</p>
+                    <span>Paulista / PE</span>
+                    <div class="unidade-badge em-breve-badge">Em breve</div>
+                </div>
+            </div>
+
+            <div class="unidades-content" style="margin-top:2.5rem;">
+                <div class="unidades-mapa" data-aos="fade-right" data-aos-duration="800">
+                    <iframe
+                        id="mapa-unidade"
+                        src="https://www.google.com/maps?q=R.+Cap.+Rebelinho,+330+-+Pina,+Recife+-+PE&output=embed"
+                        width="100%"
+                        height="400"
+                        style="border:0;"
                         loading="lazy">
                     </iframe>
                 </div>
-                <div class="localizacao-info-simples" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
-                    <p class="endereco-destaque">
-                        <i class="fas fa-map-marker-alt"></i> 
+
+                <div class="unidades-info" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
+                    <p class="endereco-destaque" id="endereco-unidade">
+                        <i class="fas fa-map-marker-alt"></i>
                         <strong>Rua Capitão Rebelinho, 330</strong><br>
                         Pina, Recife/PE
                     </p>
-                    <a href="https://maps.google.com?q=R.+Cap.+Rebelinho,+330+-+Pina,+Recife+-+PE" 
-                       class="btn-mapa-minimalista" 
-                       target="_blank" 
-                       rel="noopener">
+                    
+                    <div class="info-unidade-extra">
+                        <p><i class="far fa-clock"></i> <strong>Horário:</strong> <span id="horario-unidade">Seg, Qua e Sex: 8h às 21h | Sáb: 8h às 17h</span></p>
+                        <p><i class="fab fa-whatsapp"></i> <strong>WhatsApp:</strong> (81) 97905-9047</p>
+                    </div>
+                    
+                    <a href="https://maps.google.com?q=R.+Cap.+Rebelinho,+330+-+Pina,+Recife+-+PE"
+                        id="link-maps"
+                        class="btn-mapa-minimalista"
+                        target="_blank"
+                        rel="noopener">
                         <i class="fas fa-directions"></i> Rotas no Maps
                     </a>
                 </div>
@@ -260,51 +189,69 @@
 
     <footer>
         <div class="container footer-container">
-            <div class="footer-col footer-brand">
-                <div class="logo-footer">
-                    <img src="images/logos/logo_casa do autista_vert.png" alt="Logo Casa do Autista"/>
-                </div>
-                <p class="footer-slogan">Um sonho, um propósito, uma missão, uma casa</p>
+
+            <div class="footer-col">
+                <h4>Unidades</h4>
+
+                <p>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <strong>Pina</strong><br>
+                    <a href="https://maps.google.com?q=R.+Cap.+Rebelinho,+330+-+Pina,+Recife+-+PE" target="_blank" rel="noopener" class="footer-link">
+                        Rua Capitão Rebelinho, 330
+                    </a><br>
+                    Seg, Qua e Sex: 8h às 21h | Sáb: 8h às 17h
+                </p>
+
+                <p>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <strong>Paulista</strong><br>
+                    Av. Marechal Floriano Peixoto<br>
+                    <span class="horario-em-breve">Em breve</span>
+                </p>
             </div>
 
-            <div class="footer-col footer-contact">
-                <h4>Informações</h4>
-                <ul class="contact-list">
-                    <li><i class="fas fa-map-marker-alt"></i><span>Rua Capitão Rebelinho, 330 - Pina<br>Recife/PE</span></li>
-                    <li><i class="fab fa-whatsapp"></i><span>(81) 9 7905-9047</span></li>
-                    <li><i class="fas fa-envelope"></i><span>clinicatearecife@gmail.com</span></li>
-                </ul>
+            <div class="footer-col">
+                <h4>Contato</h4>
+                <p>
+                    <i class="fab fa-whatsapp"></i>
+                    <a href="https://wa.me/558179059047" target="_blank" rel="noopener" class="footer-link">
+                        (81) 97905-9047
+                    </a>
+                </p>
+                <p>
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:clinicatearecife@gmail.com" class="footer-link">
+                        clinicatearecife@gmail.com
+                    </a>
+                </p>
             </div>
 
-            <div class="footer-col footer-social">
+            <div class="footer-col">
                 <h4>Redes Sociais</h4>
-                <div class="social-links">
-                    <a href="https://www.instagram.com/casadoautistape/" target="_blank" rel="noopener noreferrer" class="social-icon">
-                        <i class="fab fa-instagram"></i>
-                        <span>@casadoautistape</span>
-                    </a>
-                    <a href="https://www.facebook.com/casadoautistape" target="_blank" rel="noopener noreferrer" class="social-icon">
-                        <i class="fab fa-facebook-f"></i>
-                        <span>/casadoautistape</span>
-                    </a>
-                </div>
-                <h4 class="hours-title">Horário de Funcionamento</h4>
-                <p class="hours-text">Segunda, Quarta e Sexta: 8h às 21h<br>Sábado: 8h às 17h</p>
+
+                <a href="https://www.instagram.com/casadoautistape/" target="_blank" class="footer-social-link">
+                    <i class="fab fa-instagram"></i> @casadoautistape
+                </a>
+
+                <a href="https://www.facebook.com/profile.php?id=61579635053999" target="_blank" class="footer-social-link">
+                    <i class="fab fa-facebook-f"></i> /casadoautistape
+                </a>
             </div>
+
         </div>
 
         <div class="footer-bottom">
-            <div class="container">
-                <p class="copyright">
-                    &copy; 2025 Casa do Autista. Todos os direitos reservados.
-                </p>
+            <div class="container footer-bottom-content">
+                <p>&copy; 2025 Casa do Autista. Todos os direitos reservados.</p>
+
                 <div class="footer-links">
                     <a href="#">Política de Privacidade</a>
                     <span>|</span>
                     <a href="#">Termos de Uso</a>
                 </div>
+
                 <div class="creditos-site">
-                    Desenvolvido com ❤️ por 
+                    Desenvolvido com ❤️ por
                     <a href="https://www.linkedin.com/in/douglasferrazdev/" target="_blank" rel="noopener">
                         Douglinhas
                     </a>
