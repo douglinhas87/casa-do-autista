@@ -1,6 +1,6 @@
 const config = {
     animation: {
-        cardHover: false,
+        cardHover: true,
         lazyLoad: true,
         scrollReveal: true
     },
@@ -46,19 +46,8 @@ const servicos = [
     { icone: "mdi:baby-face-outline", titulo: "Nutrição Infantil", descricao: "Orientações nutricionais para uma alimentação saudável desde a infância" }
 ];
 
-/* 
-CONVÊNIOS COMENTADOS - REATIVAR FUTURAMENTE
-const convenios = [
-    { nome: "Unimed", logo: "unimed.png" },
-    { nome: "Amil", logo: "amil.png" },
-    { nome: "Bradesco Saúde", logo: "bradesco.png" },
-    { nome: "SulAmérica", logo: "sulamerica.png" }
-];
-*/
-
 const DOM = {
     cardsServicos: document.getElementById('cards-servicos'),
-    // cardsConvenios: document.getElementById('cards-convenios'), // COMENTADO: Elemento de convênios
     footerCopy: document.querySelector('.copyright'),
     whatsappBtn: document.querySelector('.whatsapp-btn'),
     whatsappFloat: document.querySelector('.whatsapp-float'),
@@ -135,26 +124,6 @@ const utils = {
                 card.style.zIndex = '1';
             });
         });
-
-        /* COMENTADO: Efeitos hover para convênios
-        document.querySelectorAll('#cards-convenios .convenio-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-10px)';
-                card.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
-                card.style.zIndex = '10';
-                const img = card.querySelector('img');
-                if (img) img.style.filter = 'none';
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0)';
-                card.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
-                card.style.zIndex = '1';
-                const img = card.querySelector('img');
-                if (img) img.style.filter = 'grayscale(100%)';
-            });
-        });
-        */
     }
 };
 
@@ -253,10 +222,12 @@ function setupSmoothScroll() {
                     history.pushState(null, null, href);
                     
                     if (window.innerWidth <= 768 && DOM.nav.classList.contains('active')) {
-                        DOM.mobileMenuBtn.innerHTML = '☰';
-                        DOM.mobileMenuBtn.style.transform = 'rotate(0)';
                         DOM.nav.classList.remove('active');
                         document.body.classList.remove('menu-open');
+                        document.documentElement.classList.remove('menu-open');
+                        if (DOM.mobileMenuBtn) {
+                            DOM.mobileMenuBtn.classList.remove('active');
+                        }
                     }
                 }
             }
@@ -285,32 +256,6 @@ const render = {
         }
     },
 
-    /* COMENTADO: Função de renderização de convênios
-    convenios: () => {
-        DOM.cardsConvenios.innerHTML = convenios.map((convenio, index) => `
-            <div class="card convenio-card" 
-                 data-aos="fade-up" 
-                 data-aos-delay="${index * 50}">
-                <img 
-                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 50'%3E%3C/svg%3E" 
-                    data-src="images/convenios/${convenio.logo}" 
-                    alt="${convenio.nome}" 
-                    class="logo-convenio"
-                    loading="lazy"
-                    style="filter: grayscale(100%); transition: filter 0.3s ease"
-                >
-                <p>${convenio.nome}</p>
-            </div>
-        `).join('');
-
-        utils.setupHoverEffects();
-
-        if (config.animation.lazyLoad) {
-            utils.lazyLoad(DOM.cardsConvenios);
-        }
-    },
-    */
-
     footer: () => {
         const year = new Date().getFullYear();
         if (DOM.footerCopy) {
@@ -335,69 +280,6 @@ const render = {
                 e.preventDefault();
                 window.location.href = whatsappLink;
             });
-        }
-    },
-
-    setupMobileMenu: () => {
-        if (DOM.mobileMenuBtn && DOM.nav) {
-            let menuOpen = false;
-
-            DOM.mobileMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuOpen = !menuOpen;
-                
-                if (menuOpen) {
-                    DOM.mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
-                    DOM.mobileMenuBtn.style.transform = 'rotate(90deg)';
-                    DOM.mobileMenuBtn.style.color = 'var(--branco)';
-                    
-                    const btnRect = DOM.mobileMenuBtn.getBoundingClientRect();
-                    DOM.nav.style.top = `${btnRect.bottom + window.scrollY}px`;
-                    DOM.nav.style.right = `${window.innerWidth - btnRect.right}px`;
-                    
-                    DOM.nav.classList.add('active');
-                    document.body.classList.add('menu-open');
-                } else {
-                    DOM.mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    DOM.mobileMenuBtn.style.transform = 'rotate(0)';
-                    DOM.mobileMenuBtn.style.color = 'var(--destaque)';
-                    DOM.nav.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                }
-            });
-
-            document.addEventListener('click', (e) => {
-                if (menuOpen && !DOM.nav.contains(e.target) && e.target !== DOM.mobileMenuBtn) {
-                    DOM.mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    DOM.mobileMenuBtn.style.transform = 'rotate(0)';
-                    DOM.mobileMenuBtn.style.color = 'var(--destaque)';
-                    DOM.nav.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                    menuOpen = false;
-                }
-            });
-
-            DOM.nav.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    DOM.mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    DOM.mobileMenuBtn.style.transform = 'rotate(0)';
-                    DOM.mobileMenuBtn.style.color = 'var(--destaque)';
-                    DOM.nav.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                    menuOpen = false;
-                });
-            });
-
-            window.addEventListener('resize', utils.debounce(() => {
-                if (window.innerWidth > 768 && menuOpen) {
-                    DOM.mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    DOM.mobileMenuBtn.style.transform = 'rotate(0)';
-                    DOM.mobileMenuBtn.style.color = 'var(--destaque)';
-                    DOM.nav.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                    menuOpen = false;
-                }
-            }, 100));
         }
     }
 };
@@ -434,233 +316,154 @@ const handlers = {
     handleScroll: utils.debounce(() => {}, 50)
 };
 
-function otimizarMenuMobile() {
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+function setupMobileHamburger() {
     const menuBtn = document.querySelector('.menu-mobile-btn');
     const nav = document.querySelector('nav');
     const body = document.body;
+    const html = document.documentElement;
     
-    if (!menuBtn || !nav) return;
+    if (!menuBtn || !nav || !isMobile()) return;
     
     let menuOpen = false;
-    let touchStartY = 0;
-    let touchEndY = 0;
     
-    const toggleMenu = () => {
+    const icon = menuBtn.querySelector('i');
+    if (icon) icon.remove();
+    
+    if (!menuBtn.querySelector('span')) {
+        const span = document.createElement('span');
+        menuBtn.appendChild(span);
+    }
+    
+    function toggleMenu() {
         menuOpen = !menuOpen;
         
-        if (menuOpen) {
-            menuBtn.innerHTML = '<i class="fas fa-times"></i>';
-            menuBtn.style.transform = 'rotate(90deg)';
-            nav.classList.add('active');
-            body.style.overflow = 'hidden';
-            
-            const backdrop = document.createElement('div');
-            backdrop.className = 'menu-backdrop';
-            backdrop.style.cssText = `
-                position: fixed;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                height: calc(100% - 70px);
-                background: rgba(0,0,0,0.5);
-                z-index: 998;
-                display: block;
-            `;
-            backdrop.addEventListener('click', closeMenu);
-            document.body.appendChild(backdrop);
-        } else {
-            closeMenu();
-        }
-    };
-    
-    const closeMenu = () => {
-        menuOpen = false;
-        menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-        menuBtn.style.transform = 'rotate(0)';
-        nav.classList.remove('active');
-        body.style.overflow = '';
+        menuBtn.classList.toggle('active', menuOpen);
+        nav.classList.toggle('active', menuOpen);
+        body.classList.toggle('menu-open', menuOpen);
+        html.classList.toggle('menu-open', menuOpen);
         
-        const backdrop = document.querySelector('.menu-backdrop');
-        if (backdrop) {
-            backdrop.remove();
+        let backdrop = document.querySelector('.menu-backdrop');
+        
+        if (menuOpen) {
+            if (!backdrop) {
+                backdrop = document.createElement('div');
+                backdrop.className = 'menu-backdrop';
+                backdrop.addEventListener('click', toggleMenu);
+                document.body.appendChild(backdrop);
+            }
+            backdrop.classList.add('active');
+            
+            body.style.overflow = 'hidden';
+            html.style.overflow = 'hidden';
+        } else {
+            if (backdrop) {
+                backdrop.classList.remove('active');
+            }
+            
+            body.style.overflow = '';
+            html.style.overflow = '';
         }
-    };
+    }
     
-    menuBtn.addEventListener('click', toggleMenu);
+    menuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
+    });
     
     nav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', closeMenu);
-    });
-    
-    nav.addEventListener('touchstart', (e) => {
-        touchStartY = e.changedTouches[0].screenY;
-    });
-    
-    nav.addEventListener('touchend', (e) => {
-        touchEndY = e.changedTouches[0].screenY;
-        const diff = touchStartY - touchEndY;
-        
-        if (diff > 50) {
-            closeMenu();
-        }
-    });
-    
-    window.addEventListener('orientationchange', closeMenu);
-}
-
-function otimizarTouchEvents() {
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', (event) => {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
-        }
-        lastTouchEnd = now;
-    }, false);
-    
-    const touchElements = document.querySelectorAll('a, button, .card, .unidade-card');
-    touchElements.forEach(el => {
-        el.style.webkitTapHighlightColor = 'transparent';
-        
-        el.addEventListener('touchstart', () => {
-            el.style.opacity = '0.8';
-        });
-        
-        el.addEventListener('touchend', () => {
-            el.style.opacity = '1';
-        });
-        
-        el.addEventListener('touchcancel', () => {
-            el.style.opacity = '1';
-        });
-    });
-}
-
-function ajustarHeightMobile() {
-    const hero = document.querySelector('.hero');
-    if (hero && window.innerWidth <= 768) {
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-        
-        hero.style.height = 'calc(var(--vh, 1vh) * 100)';
-        
-        window.addEventListener('resize', () => {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-            hero.style.height = 'calc(var(--vh, 1vh) * 100)';
-        });
-    }
-}
-
-function lazyLoadMobile() {
-    if ('IntersectionObserver' in window) {
-        const lazyImages = document.querySelectorAll('img[data-src]');
-        
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.add('loaded');
-                    imageObserver.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: '50px 0px',
-            threshold: 0.1
-        });
-        
-        lazyImages.forEach(img => imageObserver.observe(img));
-    } else {
-        const lazyImages = document.querySelectorAll('img[data-src]');
-        lazyImages.forEach(img => {
-            img.src = img.dataset.src;
-        });
-    }
-}
-
-function scrollSuaveMobile() {
-    const links = document.querySelectorAll('a[href^="#"]');
-    
-    links.forEach(link => {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             
-            if (href === '#' || href === '#agendamento') return;
-            
-            e.preventDefault();
-            
-            const target = document.querySelector(href);
-            if (target) {
-                const headerHeight = document.querySelector('header').offsetHeight;
-                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = targetPosition - headerHeight;
-                
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-                
-                const nav = document.querySelector('nav');
-                if (nav && nav.classList.contains('active')) {
-                    document.querySelector('.menu-mobile-btn').click();
+            if (href !== '#agendamento' && href !== '#') {
+                if (menuOpen) {
+                    toggleMenu();
                 }
             }
         });
     });
+    
+    document.addEventListener('click', function(e) {
+        const backdrop = document.querySelector('.menu-backdrop');
+        if (menuOpen && backdrop && backdrop.contains(e.target)) {
+            toggleMenu();
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && menuOpen) {
+            toggleMenu();
+        }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if (menuOpen && e.key === 'Escape') {
+            toggleMenu();
+        }
+    });
 }
 
-function detectarDispositivo() {
-    const isMobile = window.innerWidth <= 768;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const isAndroid = /Android/.test(navigator.userAgent);
+function preventScrollIssues() {
+    if (!isMobile()) return;
     
-    if (isMobile) {
-        document.body.classList.add('mobile');
+    let lastScrollTop = 0;
+    let scrollTimeout;
+    
+    function handleMobileScroll() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        if (isIOS) {
-            document.body.classList.add('ios');
-            const inputs = document.querySelectorAll('input, textarea, select');
-            inputs.forEach(input => {
-                input.style.fontSize = '16px';
-            });
+        if (scrollTop < 0) {
+            window.scrollTo(0, 0);
         }
         
-        if (isAndroid) {
-            document.body.classList.add('android');
-        }
-        
-        if (window.innerWidth < 768) {
-            const style = document.createElement('style');
-            style.textContent = `
-                .hero::after { animation: none !important; }
-                [data-aos] { transition: none !important; }
-                .card:hover, .convenio-card:hover { transform: none !important; }
-            `;
-            document.head.appendChild(style);
-        }
+        lastScrollTop = scrollTop;
     }
+    
+    let ticking = false;
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                handleMobileScroll();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchstart', function(e) {
+        if (e.target.tagName === 'INPUT' || 
+            e.target.tagName === 'SELECT' || 
+            e.target.tagName === 'TEXTAREA') {
+            e.target.style.fontSize = '16px';
+        }
+    }, { passive: true });
 }
 
-function prevenirZoomInputs() {
-    const inputs = document.querySelectorAll('input, textarea, select');
+function setupScrollAnimations() {
+    if (!config.animation.scrollReveal || !window.IntersectionObserver) return;
     
-    inputs.forEach(input => {
-        input.setAttribute('autocorrect', 'off');
-        input.setAttribute('autocapitalize', 'off');
-        input.setAttribute('spellcheck', 'false');
-        
-        input.addEventListener('focus', () => {
-            document.body.style.zoom = '1';
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+                
+                if (entry.target.classList.contains('card') || 
+                    entry.target.classList.contains('whatsapp-agendamento-card')) {
+                    entry.target.classList.add('animate');
+                }
+            }
         });
-        
-        if ('visualViewport' in window) {
-            input.addEventListener('focus', () => {
-                window.visualViewport.addEventListener('resize', () => {
-                    window.scrollTo(0, 0);
-                });
-            });
-        }
+    }, { 
+        threshold: 0.1,
+        rootMargin: '50px 0px'
+    });
+    
+    document.querySelectorAll('[data-aos], .card, .whatsapp-agendamento-card').forEach(el => {
+        observer.observe(el);
     });
 }
 
@@ -668,79 +471,45 @@ const init = () => {
     initAOS();
     
     render.servicos();
-    // render.convenios(); // COMENTADO: Chamada para renderizar convênios
     render.footer();
     render.setupWhatsAppButtons();
-    render.setupMobileMenu();
     
-    setupSmoothScroll();
-    
-    setupUnidades();
-    
-    preventZoomOnInput();
-    
-    handlers.handleAgendamentoSection();
-
-    if (config.performance.debounceScroll) {
-        window.addEventListener('scroll', handlers.handleScroll);
-    }
-
-    document.body.classList.add('loaded');
-    
-    otimizarMenuMobile();
-    otimizarTouchEvents();
-    ajustarHeightMobile();
-    lazyLoadMobile();
-    scrollSuaveMobile();
-    detectarDispositivo();
-    prevenirZoomInputs();
-    
-    if (window.innerWidth <= 768) {
+    if (isMobile()) {
+        setupMobileHamburger();
+        config.animation.cardHover = false;
+        
         if (typeof AOS !== 'undefined') {
             AOS.init({
                 disable: true
             });
         }
         
-        const cards = document.querySelectorAll('.card, .convenio-card');
-        cards.forEach(card => {
-            card.style.cursor = 'pointer';
-            card.addEventListener('touchstart', () => {
-                card.style.transform = 'scale(0.98)';
-            });
-            card.addEventListener('touchend', () => {
-                card.style.transform = 'scale(1)';
-            });
-            card.addEventListener('touchcancel', () => {
-                card.style.transform = 'scale(1)';
-            });
-        });
-        
-        const iframe = document.getElementById('mapa-unidade');
-        if (iframe) {
-            iframe.setAttribute('loading', 'lazy');
-            iframe.style.minHeight = '300px';
-        }
-        
-        document.body.style.webkitOverflowScrolling = 'touch';
+        preventScrollIssues();
+    } else {
+        config.animation.cardHover = true;
     }
+    
+    setupSmoothScroll();
+    setupUnidades();
+    
+    handlers.handleAgendamentoSection();
+
+    setupScrollAnimations();
+    
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            if (window.innerWidth <= 768) {
+                if (!isMobile()) {
+                    location.reload();
+                }
+            }
+        }, 250);
+    });
+
+    document.body.classList.add('loaded');
 };
-
-if (!window.IntersectionObserver) {
-    console.warn('IntersectionObserver não suportado, desativando animações');
-    config.animation.lazyLoad = false;
-    config.animation.scrollReveal = false;
-}
-
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        if (window.innerWidth <= 768) {
-            ajustarHeightMobile();
-        }
-    }, 250);
-});
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
