@@ -1,3 +1,32 @@
+window.addEventListener('load', function() {
+    if (window.location.hash) {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
+        setTimeout(function() {
+            history.replaceState(null, null, ' ');
+        }, 100);
+    }
+    
+    if (window.innerWidth <= 768) {
+        window.scrollTo(0, 0);
+        
+        setTimeout(function() {
+            window.scrollTo(0, 0);
+        }, 50);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 768) {
+        setTimeout(function() {
+            window.scrollTo(0, 0);
+        }, 100);
+    }
+});
+
 const config = {
     animation: {
         cardHover: true,
@@ -11,15 +40,17 @@ const config = {
 };
 
 function initAOS() {
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true,
-        mirror: false,
-        disable: function() {
-            return window.innerWidth < 768;
-        }
-    });
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            mirror: false,
+            disable: function() {
+                return window.innerWidth < 768;
+            }
+        });
+    }
 }
 
 const servicos = [
@@ -65,14 +96,16 @@ const utils = {
     },
 
     lazyLoad: (element) => {
-        if (config.animation.lazyLoad && element) {
+        if (config.animation.lazyLoad && element && window.IntersectionObserver) {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.add('fade-in');
-                        observer.unobserve(img);
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.classList.add('fade-in');
+                            observer.unobserve(img);
+                        }
                     }
                 });
             }, { threshold: 0.1 });
@@ -84,7 +117,7 @@ const utils = {
     },
 
     animateOnScroll: (element) => {
-        if (config.animation.scrollReveal && element) {
+        if (config.animation.scrollReveal && element && window.IntersectionObserver) {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -109,12 +142,15 @@ const utils = {
     },
 
     setupHoverEffects: () => {
-        if (!config.animation.cardHover) return;
+        if (!config.animation.cardHover || window.innerWidth <= 768) return;
+        
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) return;
 
         document.querySelectorAll('#cards-servicos .card').forEach(card => {
             card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-10px)';
-                card.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
+                card.style.transform = 'translateY(-8px)';
+                card.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.15)';
                 card.style.zIndex = '10';
             });
             
@@ -126,6 +162,72 @@ const utils = {
         });
     }
 };
+
+function setupOptimizedCardAnimations() {
+    if (window.innerWidth <= 768) return;
+    
+    const cards = document.querySelectorAll('#servicos .card, .convenio-card');
+    let animationFrameId;
+    let lastScrollY = window.scrollY;
+    
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
+        
+        cards.forEach(card => observer.observe(card));
+    }
+    
+    function debounce(func, wait = 100) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    const handleScroll = debounce(() => {
+        const currentScrollY = window.scrollY;
+        const scrollDelta = Math.abs(currentScrollY - lastScrollY);
+        
+        if (scrollDelta > 50) {
+            cards.forEach(card => {
+                card.style.transition = 'none';
+                card.style.animationPlayState = 'paused';
+            });
+            
+            setTimeout(() => {
+                cards.forEach(card => {
+                    card.style.transition = '';
+                    card.style.animationPlayState = '';
+                });
+            }, 300);
+        }
+        
+        lastScrollY = currentScrollY;
+    }, 50);
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+        window.removeEventListener('scroll', handleScroll);
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+    };
+}
 
 function setupUnidades() {
     const unidadesCards = document.querySelectorAll('.unidade-card');
@@ -202,31 +304,42 @@ function setupUnidades() {
 }
 
 function setupSmoothScroll() {
-    document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+    const scrollLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
+    
+    scrollLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             
-            if (href !== '#') {
-                e.preventDefault();
+            if (href === '#' || href === '') return;
+            
+            e.preventDefault();
+            
+            const targetId = href.substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
                 
-                const targetElement = document.querySelector(href);
-                if (targetElement) {
-                    const headerHeight = document.querySelector('header').offsetHeight;
-                    const offsetPosition = targetElement.offsetTop - headerHeight;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-
-                    history.pushState(null, null, href);
+                history.pushState(null, null, href);
+                
+                if (window.innerWidth <= 768) {
+                    const nav = document.querySelector('nav');
+                    const menuBtn = document.querySelector('.menu-mobile-btn');
                     
-                    if (window.innerWidth <= 768 && DOM.nav.classList.contains('active')) {
-                        DOM.nav.classList.remove('active');
+                    if (nav && nav.classList.contains('active')) {
+                        nav.classList.remove('active');
+                        menuBtn.classList.remove('active');
                         document.body.classList.remove('menu-open');
                         document.documentElement.classList.remove('menu-open');
-                        if (DOM.mobileMenuBtn) {
-                            DOM.mobileMenuBtn.classList.remove('active');
+                        menuBtn.setAttribute('aria-expanded', 'false');
+                        
+                        const backdrop = document.querySelector('.menu-backdrop');
+                        if (backdrop) {
+                            backdrop.classList.remove('active');
+                            backdrop.remove();
                         }
                     }
                 }
@@ -235,103 +348,13 @@ function setupSmoothScroll() {
     });
 }
 
-const render = {
-    servicos: () => {
-        DOM.cardsServicos.innerHTML = servicos.map((servico, index) => `
-            <div class="card" 
-                 data-aos="fade-up" 
-                 data-aos-delay="${index * 50}">
-                <iconify-icon icon="${servico.icone}" class="icone-servico"></iconify-icon>
-                <h4>${servico.titulo}</h4>
-                <p>${servico.descricao}</p>
-            </div>
-        `).join('');
-
-        utils.setupHoverEffects();
-
-        if (config.animation.scrollReveal) {
-            document.querySelectorAll('#cards-servicos .card').forEach(card => {
-                utils.animateOnScroll(card);
-            });
-        }
-    },
-
-    footer: () => {
-        const year = new Date().getFullYear();
-        if (DOM.footerCopy) {
-            DOM.footerCopy.innerHTML = `&copy; ${year} Casa do Autista. Todos os direitos reservados.`;
-        }
-    },
-
-    setupWhatsAppButtons: () => {
-        const whatsappLink = utils.initWhatsApp();
-        
-        if (DOM.whatsappBtn) {
-            DOM.whatsappBtn.href = whatsappLink;
-        }
-        
-        if (DOM.whatsappFloat) {
-            DOM.whatsappFloat.href = whatsappLink;
-        }
-        
-        const navWhatsappBtn = document.querySelector('nav a[href="#agendamento"]');
-        if (navWhatsappBtn) {
-            navWhatsappBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.location.href = whatsappLink;
-            });
-        }
-    }
-};
-
-function preventZoomOnInput() {
-    document.addEventListener('touchstart', function(event) {
-        if (['INPUT','SELECT','TEXTAREA'].includes(event.target.tagName)) {
-            event.preventDefault();
-        }
-    }, { passive: false });
-}
-
-const handlers = {
-    handleAgendamentoSection: () => {
-        const agendamentoSection = document.getElementById('agendamento');
-        if (agendamentoSection) {
-            if (config.animation.scrollReveal) {
-                utils.animateOnScroll(agendamentoSection);
-            }
-            
-            const agendamentoCard = document.querySelector('.whatsapp-agendamento-card');
-            if (agendamentoCard && config.animation.cardHover) {
-                agendamentoCard.addEventListener('mouseenter', () => {
-                    agendamentoCard.style.transform = 'translateY(-5px)';
-                });
-                
-                agendamentoCard.addEventListener('mouseleave', () => {
-                    agendamentoCard.style.transform = 'translateY(0)';
-                });
-            }
-        }
-    },
-
-    handleScroll: utils.debounce(() => {}, 50)
-};
-
-function isMobile() {
-    return window.innerWidth <= 768;
-}
-
 function setupMobileHamburger() {
     const menuBtn = document.querySelector('.menu-mobile-btn');
     const nav = document.querySelector('nav');
     const body = document.body;
     const html = document.documentElement;
     
-    if (!menuBtn || !nav || !isMobile()) return;
-    
-    let menuOpen = false;
-    
-    const icon = menuBtn.querySelector('i');
-    if (icon) icon.remove();
+    if (!menuBtn || !nav || window.innerWidth > 768) return;
     
     if (!menuBtn.querySelector('span')) {
         const span = document.createElement('span');
@@ -339,16 +362,17 @@ function setupMobileHamburger() {
     }
     
     function toggleMenu() {
-        menuOpen = !menuOpen;
+        const isOpen = nav.classList.contains('active');
         
-        menuBtn.classList.toggle('active', menuOpen);
-        nav.classList.toggle('active', menuOpen);
-        body.classList.toggle('menu-open', menuOpen);
-        html.classList.toggle('menu-open', menuOpen);
+        nav.classList.toggle('active');
+        menuBtn.classList.toggle('active');
+        body.classList.toggle('menu-open');
+        html.classList.toggle('menu-open');
+        menuBtn.setAttribute('aria-expanded', (!isOpen).toString());
         
         let backdrop = document.querySelector('.menu-backdrop');
         
-        if (menuOpen) {
+        if (!isOpen) {
             if (!backdrop) {
                 backdrop = document.createElement('div');
                 backdrop.className = 'menu-backdrop';
@@ -356,16 +380,15 @@ function setupMobileHamburger() {
                 document.body.appendChild(backdrop);
             }
             backdrop.classList.add('active');
-            
-            body.style.overflow = 'hidden';
-            html.style.overflow = 'hidden';
         } else {
             if (backdrop) {
                 backdrop.classList.remove('active');
+                setTimeout(() => {
+                    if (backdrop && backdrop.parentNode) {
+                        backdrop.remove();
+                    }
+                }, 300);
             }
-            
-            body.style.overflow = '';
-            html.style.overflow = '';
         }
     }
     
@@ -374,71 +397,78 @@ function setupMobileHamburger() {
         toggleMenu();
     });
     
-    nav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', function(e) {
+    const menuLinks = nav.querySelectorAll('a');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
             const href = this.getAttribute('href');
-            
-            if (href !== '#agendamento' && href !== '#') {
-                if (menuOpen) {
-                    toggleMenu();
-                }
+            if (href && href.startsWith('#')) {
+                setTimeout(() => {
+                    if (nav.classList.contains('active')) {
+                        toggleMenu();
+                    }
+                }, 300);
             }
         });
     });
     
-    document.addEventListener('click', function(e) {
-        const backdrop = document.querySelector('.menu-backdrop');
-        if (menuOpen && backdrop && backdrop.contains(e.target)) {
-            toggleMenu();
-        }
-    });
-    
     window.addEventListener('resize', function() {
-        if (window.innerWidth > 768 && menuOpen) {
+        if (window.innerWidth > 768 && nav.classList.contains('active')) {
             toggleMenu();
         }
     });
     
     document.addEventListener('keydown', function(e) {
-        if (menuOpen && e.key === 'Escape') {
+        if (e.key === 'Escape' && nav.classList.contains('active')) {
             toggleMenu();
         }
     });
 }
 
-function preventScrollIssues() {
-    if (!isMobile()) return;
+function detectBrowserAndApplyFixes() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     
-    let lastScrollTop = 0;
-    let scrollTimeout;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    const isSamsungBrowser = /SamsungBrowser/i.test(userAgent);
     
-    function handleMobileScroll() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (isIOS) {
+        document.documentElement.classList.add('ios-device');
         
-        if (scrollTop < 0) {
-            window.scrollTo(0, 0);
-        }
+        applyIOSFixes();
         
-        lastScrollTop = scrollTop;
+        document.addEventListener('touchstart', function() {}, {passive: true});
+    }
+    
+    if (isSamsungBrowser) {
+        document.documentElement.classList.add('samsung-browser');
+    }
+}
+
+function applyIOSFixes() {
+    config.animation.cardHover = false;
+    
+    const servicosSection = document.getElementById('servicos');
+    if (servicosSection) {
+        servicosSection.style.webkitTransform = 'translate3d(0,0,0)';
+        servicosSection.style.transform = 'translate3d(0,0,0)';
+        
+        setTimeout(() => {
+            servicosSection.style.display = 'none';
+            setTimeout(() => {
+                servicosSection.style.display = 'block';
+            }, 50);
+        }, 100);
     }
     
     let ticking = false;
-    
     window.addEventListener('scroll', function() {
         if (!ticking) {
             window.requestAnimationFrame(function() {
-                handleMobileScroll();
+                document.querySelectorAll('section').forEach(section => {
+                    section.style.transform = 'translate3d(0,0,0)';
+                });
                 ticking = false;
             });
             ticking = true;
-        }
-    }, { passive: true });
-    
-    document.addEventListener('touchstart', function(e) {
-        if (e.target.tagName === 'INPUT' || 
-            e.target.tagName === 'SELECT' || 
-            e.target.tagName === 'TEXTAREA') {
-            e.target.style.fontSize = '16px';
         }
     }, { passive: true });
 }
@@ -467,46 +497,120 @@ function setupScrollAnimations() {
     });
 }
 
+const render = {
+    servicos: () => {
+        if (!DOM.cardsServicos) return;
+        
+        DOM.cardsServicos.innerHTML = servicos.map((servico, index) => `
+            <div class="card" 
+                 data-aos="fade-up" 
+                 data-aos-delay="${index * 50}">
+                <iconify-icon icon="${servico.icone}" class="icone-servico" aria-hidden="true"></iconify-icon>
+                <h4>${servico.titulo}</h4>
+                <p>${servico.descricao}</p>
+            </div>
+        `).join('');
+
+        utils.setupHoverEffects();
+
+        if (config.animation.scrollReveal) {
+            document.querySelectorAll('#cards-servicos .card').forEach(card => {
+                utils.animateOnScroll(card);
+            });
+        }
+    },
+
+    footer: () => {
+        const year = new Date().getFullYear();
+        if (DOM.footerCopy) {
+            DOM.footerCopy.innerHTML = `&copy; ${year} Casa do Autista. Todos os direitos reservados.`;
+        }
+    },
+
+    setupWhatsAppButtons: () => {
+        const whatsappLink = utils.initWhatsApp();
+        
+        if (DOM.whatsappBtn) {
+            DOM.whatsappBtn.href = whatsappLink;
+            DOM.whatsappBtn.setAttribute('target', '_blank');
+            DOM.whatsappBtn.setAttribute('rel', 'noopener');
+        }
+        
+        if (DOM.whatsappFloat) {
+            DOM.whatsappFloat.href = whatsappLink;
+            DOM.whatsappFloat.setAttribute('target', '_blank');
+            DOM.whatsappFloat.setAttribute('rel', 'noopener');
+        }
+        
+        const navWhatsappBtn = document.querySelector('nav a.btn-destaque');
+        if (navWhatsappBtn) {
+            navWhatsappBtn.href = whatsappLink;
+            navWhatsappBtn.setAttribute('target', '_blank');
+            navWhatsappBtn.setAttribute('rel', 'noopener');
+            
+            if (window.innerWidth <= 768) {
+                navWhatsappBtn.addEventListener('click', function() {
+                    const nav = document.querySelector('nav');
+                    const menuBtn = document.querySelector('.menu-mobile-btn');
+                    
+                    if (nav && nav.classList.contains('active')) {
+                        nav.classList.remove('active');
+                        menuBtn.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                        document.documentElement.classList.remove('menu-open');
+                        
+                        const backdrop = document.querySelector('.menu-backdrop');
+                        if (backdrop) backdrop.remove();
+                    }
+                });
+            }
+        }
+    }
+};
+
 const init = () => {
-    initAOS();
+    detectBrowserAndApplyFixes();
+    
+    if (typeof AOS !== 'undefined' && window.innerWidth > 768) {
+        initAOS();
+    }
     
     render.servicos();
     render.footer();
     render.setupWhatsAppButtons();
     
-    if (isMobile()) {
-        setupMobileHamburger();
+    if (window.innerWidth <= 768) {
         config.animation.cardHover = false;
-        
-        if (typeof AOS !== 'undefined') {
-            AOS.init({
-                disable: true
-            });
-        }
-        
-        preventScrollIssues();
+        setupMobileHamburger();
     } else {
-        config.animation.cardHover = true;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (!isIOS) {
+            config.animation.cardHover = true;
+            utils.setupHoverEffects();
+            setupOptimizedCardAnimations();
+        }
     }
     
     setupSmoothScroll();
     setupUnidades();
-    
-    handlers.handleAgendamentoSection();
-
     setupScrollAnimations();
     
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
-            if (window.innerWidth <= 768) {
-                if (!isMobile()) {
-                    location.reload();
-                }
+    window.addEventListener('resize', utils.debounce(function() {
+        if (window.innerWidth <= 768 && config.animation.cardHover) {
+            config.animation.cardHover = false;
+        } else if (window.innerWidth > 768 && !config.animation.cardHover) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (!isIOS) {
+                config.animation.cardHover = true;
+                utils.setupHoverEffects();
+                setupOptimizedCardAnimations();
             }
-        }, 250);
-    });
+        }
+        
+        if (window.innerWidth <= 768) {
+            setupMobileHamburger();
+        }
+    }, 250));
 
     document.body.classList.add('loaded');
 };
@@ -516,3 +620,24 @@ if (document.readyState === 'loading') {
 } else {
     init();
 }
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const testLinks = document.querySelectorAll('nav a[href^="#"]');
+        testLinks.forEach(link => {
+            if (!link.hasAttribute('data-smooth-bound')) {
+                link.setAttribute('data-smooth-bound', 'true');
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.getElementById(href.substring(1));
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            }
+        });
+    }, 1000);
+});
